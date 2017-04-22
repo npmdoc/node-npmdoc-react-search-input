@@ -1,0 +1,264 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/enkidevs/react-search-input"
+
+    >react-search-input (v0.10.4)</a>
+</h1>
+<h4>Simple react.js component for a search input, providing a filter function.</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.react-search-input">module react-search-input</a><ol>
+
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">react-search-input.</span>util</span>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.react-search-input.util">module react-search-input.util</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.react-search-input.util.createFilter">
+            function <span class="apidocSignatureSpan">react-search-input.util.</span>createFilter
+            <span class="apidocSignatureSpan">(term, keys, caseSensitive, fuzzy)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.react-search-input.util.getValuesForKey">
+            function <span class="apidocSignatureSpan">react-search-input.util.</span>getValuesForKey
+            <span class="apidocSignatureSpan">(key, item)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.react-search-input.util.searchStrings">
+            function <span class="apidocSignatureSpan">react-search-input.util.</span>searchStrings
+            <span class="apidocSignatureSpan">(strings, term, caseSensitive, fuzzy)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.react-search-input" id="apidoc.module.react-search-input">module react-search-input</a></h1>
+
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.react-search-input.util" id="apidoc.module.react-search-input.util">module react-search-input.util</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.react-search-input.util.createFilter" id="apidoc.element.react-search-input.util.createFilter">
+        function <span class="apidocSignatureSpan">react-search-input.util.</span>createFilter
+        <span class="apidocSignatureSpan">(term, keys, caseSensitive, fuzzy)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function createFilter(term, keys, caseSensitive, fuzzy) {
+  return function (item) {
+    if (term === &#x27;&#x27;) {
+      return true;
+    }
+
+    if (!caseSensitive) {
+      term = term.toLowerCase();
+    }
+
+    var terms = term.split(&#x27; &#x27;);
+
+    if (!keys) {
+      return terms.every(function (term) {
+        return searchStrings([item], term, caseSensitive, fuzzy);
+      });
+    }
+
+    if (typeof keys === &#x27;string&#x27;) {
+      keys = [keys];
+    }
+
+    return terms.every(function (term) {
+      // allow search in specific fields with the syntax `field:search`
+      var currentKeys = void 0;
+      if (term.indexOf(&#x27;:&#x27;) !== -1) {
+        (function () {
+          var searchedField = term.split(&#x27;:&#x27;)[0];
+          term = term.split(&#x27;:&#x27;)[1];
+          currentKeys = keys.filter(function (key) {
+            return key.toLowerCase().indexOf(searchedField) &#x3e; -1;
+          });
+        })();
+      } else {
+        currentKeys = keys;
+      }
+
+      return currentKeys.some(function (key) {
+        var values = getValuesForKey(key, item);
+        return searchStrings(values, term, caseSensitive, fuzzy);
+      });
+    });
+  };
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.react-search-input.util.getValuesForKey" id="apidoc.element.react-search-input.util.getValuesForKey">
+        function <span class="apidocSignatureSpan">react-search-input.util.</span>getValuesForKey
+        <span class="apidocSignatureSpan">(key, item)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function getValuesForKey(key, item) {
+  var keys = key.split(&#x27;.&#x27;);
+  var results = [item];
+  keys.forEach(function (_key) {
+    var tmp = [];
+    results.forEach(function (result) {
+      if (result) {
+        if (result instanceof Array) {
+          var index = parseInt(_key, 10);
+          if (!isNaN(index)) {
+            return tmp.push(result[index]);
+          }
+          result.forEach(function (res) {
+            tmp.push(res[_key]);
+          });
+        } else if (result &#x26;&#x26; typeof result.get === &#x27;function&#x27;) {
+          tmp.push(result.get(_key));
+        } else {
+          tmp.push(result[_key]);
+        }
+      }
+    });
+
+    results = tmp;
+  });
+
+  return results.filter(function (r) {
+    return typeof r === &#x27;string&#x27; || typeof r === &#x27;number&#x27;;
+  });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.react-search-input.util.searchStrings" id="apidoc.element.react-search-input.util.searchStrings">
+        function <span class="apidocSignatureSpan">react-search-input.util.</span>searchStrings
+        <span class="apidocSignatureSpan">(strings, term, caseSensitive, fuzzy)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function searchStrings(strings, term, caseSensitive, fuzzy) {
+  strings = strings.map(function (e) {
+    return e.toString();
+  });
+
+  try {
+    if (fuzzy) {
+      if (typeof strings.toJS === &#x27;function&#x27;) {
+        strings = strings.toJS();
+      }
+      var fuse = new _fuse2.default(strings.map(function (s) {
+        return { id: s };
+      }), { keys: [&#x27;id&#x27;], id: &#x27;id&#x27;, caseSensitive: caseSensitive });
+      return fuse.search(term).length;
+    }
+    return strings.some(function (value) {
+      try {
+        if (!caseSensitive) {
+          value = value.toLowerCase();
+        }
+        if (value &#x26;&#x26; value.search(term) !== -1) {
+          return true;
+        }
+        return false;
+      } catch (e) {
+        return false;
+      }
+    });
+  } catch (e) {
+    return false;
+  }
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
